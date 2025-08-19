@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Pspk#@123
+      MYSQL_DATABASE: kadiri
+    ports:
+      - "3307:3306"   # host:container
+    networks:
+      - springboot-net
+
+  springboot-app:
+    build: .
+    container_name: register-app
+    restart: always
+    depends_on:
+      - mysqldb
+    ports:
+      - "8080:8080"
+    networks:
+      - springboot-net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/kadiri?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Pspk#@123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+
+networks:
+  springboot-net:
+    driver: bridge
